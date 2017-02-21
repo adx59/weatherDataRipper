@@ -4,6 +4,9 @@ current weather conditions.
 
 #Units
 Temperature -> Degrees Fahrenheit
+
 Humidity -> Percentage
+
 Air Pressure -> Inches of Mercury(inHG)
+
 Preciptiation -> Inches
