@@ -133,15 +133,15 @@ def getWeather():
                     elif startReading:
                         wspdStr += char
                 wDLNf = False
-        elif 'data-variable="temperature"' in l and 'span class="wx-data"' in l:
+        elif 'data-variable="temperature"' in l:
             tempDLNf = True
-        elif 'data-variable="humidity"' in l and 'span class="wx-data"' in l:
+        elif 'data-variable="humidity"' in l:
             hmdDLNf = True
-        elif 'data-variable="pressure"' in l and 'span class="wx-data"' in l:
+        elif 'data-variable="pressure"' in l:
             prsDLNf = True
-        elif 'data-variable="precip_today"' in l and 'span class="wx-data"' in l:
+        elif 'data-variable="precip_today"' in l:
             prpDNLf = True
-        elif 'data-variable="wind_gust_speed"' in l and 'span class="wx-data"' in l:
+        elif 'data-variable="wind_speed"' in l:
             wDLNf = True
         elif 'data-variable="condition"' in l:
             for char in l:
@@ -166,3 +166,6 @@ def getWeather():
 
 
     return weather(tempStr, hmdStr, prsStr, prpStr, wspdStr, cStr)
+
+setLoc('Boston', 'MA')
+print(str(getWeather()))
