@@ -10,7 +10,7 @@ city = 0
 state = 0
 
 class weather:
-    def __init__(self, temp, hmd, prs, precip, cc):
+    def __init__(self, temp, hmd, prs, precip, windspeed, cc):
         """weather(temp, hmd, prs, precip, cc) -> None
             creates a class storing the elements of
             weather"""
@@ -18,10 +18,12 @@ class weather:
         self.h = hmd
         self.p = float(prs)
         self.pcp = float(precip)
+        self.ws = float(windspeed)
         self.C = cc
 
     def __str__(self):
-        return 'Temperature: ' + str(self.t) + '\nHumidity: ' + str(self.h) + '\nAir Pressure: ' + str(self.p) + '\nToday\'s Precipitation: ' + str(self.pcp) + "\nCurrent Weather Condition: " + str(self.C)
+        return 'Temperature: ' + str(self.t) + '\nHumidity: ' + str(self.h) + '\nAir Pressure: ' + str(self.p)\
+        + "\nToday's Precipitation: " + str(self.pcp) + "\nWind Speed: " + str(self.ws) + "\nCurrent Weather Condition: " + str(self.C)
 
     def getCondition(self):
         return self.C
@@ -34,6 +36,9 @@ class weather:
 
     def getTemp(self):
         return self.t
+
+    def getWindSpd(self):
+        return self.ws
 
     def getHumid(self):
         return self.h
@@ -59,6 +64,7 @@ def getWeather():
     hmdStr = ''
     prsStr = ''
     prpStr = ''
+    wspdStr = ''
     cStr = ''
     try:
         global city, state
@@ -67,11 +73,13 @@ def getWeather():
     except:
         raise RuntimeError('No city and/or state specified')
 
+
+    #<factor>Data LiNe found <- abbreviation for variables
     tempDLNf = False
     hmdDLNf = False
     prsDLNf = False
     prpDNLf = False
-    cDNLf = False
+    wDLNf = False
     startReading = False
 
     w = urlopen('http://wunderground.com/' + 'US/'+ state + '/' + city + '.html')
@@ -115,6 +123,16 @@ def getWeather():
                 elif startReading:
                     prpStr += char
             prpDNLf = False
+        elif wDLNf:
+            if "wx-value" in l:
+                for char in l:
+                    if char == '>':
+                        startReading = True
+                    elif char == '<':
+                        startReading = False
+                    elif startReading:
+                        wspdStr += char
+                wDLNf = False
         elif 'data-variable="temperature"' in l and 'span class="wx-data"' in l:
             tempDLNf = True
         elif 'data-variable="humidity"' in l and 'span class="wx-data"' in l:
@@ -123,6 +141,8 @@ def getWeather():
             prsDLNf = True
         elif 'data-variable="precip_today"' in l and 'span class="wx-data"' in l:
             prpDNLf = True
+        elif 'data-variable="wind_gust_speed"' in l and 'span class="wx-data"' in l:
+            wDLNf = True
         elif 'data-variable="condition"' in l:
             for char in l:
                 if char == '>':
@@ -141,6 +161,8 @@ def getWeather():
     prsStr = ''.join(filter(lambda x: x.isdigit() or x == '.', prsStr))
     prpStr = prpStr[len(prpStr)//2:]
     prpStr = ''.join(filter(lambda x: x.isdigit() or x == '.', prpStr))
+    wspdStr = ''.join(filter(lambda x: x.isdigit() or x == '.', wspdStr))
     cStr = cStr[:len(cStr)-3]
 
-    return weather(tempStr, hmdStr, prsStr, prpStr, cStr)
+
+    return weather(tempStr, hmdStr, prsStr, prpStr, wspdStr, cStr)
