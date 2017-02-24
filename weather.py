@@ -8,22 +8,26 @@ from urllib.request import urlopen
 
 city = 0
 state = 0
+country = 0
 
 class weather:
-    def __init__(self, temp, hmd, prs, precip, windspeed, cc):
+    def __init__(self, temp, hmd, prs, precip, winddir, windspeed, cc):
         """weather(temp, hmd, prs, precip, cc) -> None
             creates a class storing the elements of
             weather"""
         self.t = float(temp)
         self.h = hmd
-        self.p = float(prs)
+        self.p = prs
         self.pcp = float(precip)
         self.ws = float(windspeed)
+        self.wd = winddir
         self.C = cc
 
     def __str__(self):
         return 'Temperature: ' + str(self.t) + '\nHumidity: ' + str(self.h) + '\nAir Pressure: ' + str(self.p)\
-        + "\nToday's Precipitation: " + str(self.pcp) + "\nWind Speed: " + str(self.ws) + "\nCurrent Weather Condition: " + str(self.C)
+        + "\nRainfall: " + str(self.pcp) + "\nWind Speed: " + str(self.ws) + "\nWind Direction: " + \
+        str(self.wd) + "\nCurrent Weather Condition: " + str(self.C)
+
 
     def getCondition(self):
         return self.C
@@ -43,16 +47,23 @@ class weather:
     def getHumid(self):
         return self.h
 
+    def getWindDir(self):
+        return self.wd
 
-def setLoc(c, s):
+
+def setLoc(c, s, ct):
     """setLoc(city, state) -> None
         sets location for weather detection
         required to run getWeather()"""
-    global city, state
-    if len(s) > 2:
-        raise RuntimeError('only two-letter state codes are accepted')
+    global city, state, country
+    if len(s) > 2 or len(ct) > 2:
+        raise RuntimeError('only two-letter state/country codes are accepted')
     city = c.replace(' ', '_')
     state = s
+    if ct == '':
+        country = ''
+    else:
+        country = ct
 
 
 def getWeather():
@@ -65,11 +76,15 @@ def getWeather():
     prsStr = ''
     prpStr = ''
     wspdStr = ''
+    wdirStr = ''
     cStr = ''
+
+
     try:
-        global city, state
+        global city, state, country
         len(city)
         len(state)
+        len(country)
     except:
         raise RuntimeError('No city and/or state specified')
 
@@ -80,9 +95,10 @@ def getWeather():
     prsDLNf = False
     prpDNLf = False
     wDLNf = False
+    wdDLNf = False
     startReading = False
 
-    w = urlopen('http://wunderground.com/' + 'US/'+ state + '/' + city + '.html')
+    w = urlopen('http://wunderground.com/' + country + '/'+ state + '/' + city)
     wh = w.readlines()
 
     for ln in wh:
@@ -133,9 +149,20 @@ def getWeather():
                     elif startReading:
                         wspdStr += char
                 wDLNf = False
+        elif wdDLNf:
+            if 'span class="wx-value"' in l:
+                for char in l:
+                    if char == '>':
+                        startReading = True
+                    elif char == '<':
+                        startReading = False
+                    elif startReading:
+                        wdirStr += char
+                wdDLNf = False
         elif 'data-variable="temperature"' in l:
             tempDLNf = True
         elif 'data-variable="humidity"' in l:
+            print('hello')
             hmdDLNf = True
         elif 'data-variable="pressure"' in l:
             prsDLNf = True
@@ -143,6 +170,8 @@ def getWeather():
             prpDNLf = True
         elif 'data-variable="wind_speed"' in l:
             wDLNf = True
+        elif 'data-variable="wind_dir"' in l:
+            wdDLNf = True
         elif 'data-variable="condition"' in l:
             for char in l:
                 if char == '>':
@@ -162,10 +191,18 @@ def getWeather():
     prpStr = prpStr[len(prpStr)//2:]
     prpStr = ''.join(filter(lambda x: x.isdigit() or x == '.', prpStr))
     wspdStr = ''.join(filter(lambda x: x.isdigit() or x == '.', wspdStr))
+    wdirStr = wdirStr.replace('Wind from ', '')
+    wdirStr = ''.join(filter(lambda f: f in ['N', 'S', 'W', 'E'], wdirStr))
+    wdirStr2 = ''
+    for chr in wdirStr:
+        if chr == 'N':
+            wdirStr2 += 'S'
+        elif chr == 'S':
+            wdirStr2 += 'N'
+        elif chr == 'E':
+            wdirStr2 += 'W'
+        elif chr == 'W':
+            wdirStr2 += 'E'
     cStr = cStr[:len(cStr)-3]
 
-
-    return weather(tempStr, hmdStr, prsStr, prpStr, wspdStr, cStr)
-
-setLoc('Boston', 'MA')
-print(str(getWeather()))
+    return weather(tempStr, hmdStr, prsStr, prpStr, wdirStr2, wspdStr, cStr)
