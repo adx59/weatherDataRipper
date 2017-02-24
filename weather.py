@@ -162,7 +162,6 @@ def getWeather():
         elif 'data-variable="temperature"' in l:
             tempDLNf = True
         elif 'data-variable="humidity"' in l:
-            print('hello')
             hmdDLNf = True
         elif 'data-variable="pressure"' in l:
             prsDLNf = True
