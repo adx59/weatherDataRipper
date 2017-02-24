@@ -10,8 +10,9 @@ city = 0
 state = 0
 country = 0
 
-class weather:
-    def __init__(self, temp, hmd, prs, precip, winddir, windspeed, cc):
+
+class Weather:
+    def __init__(self, temp, hmd, prs, precip, winddir, windspeed, sunrise, sunset, cc):
         """weather(temp, hmd, prs, precip, cc) -> None
             creates a class storing the elements of
             weather"""
@@ -21,33 +22,76 @@ class weather:
         self.pcp = float(precip)
         self.ws = float(windspeed)
         self.wd = winddir
+        self.sr = sunrise
+        self.ss = sunset
         self.C = cc
 
     def __str__(self):
+        """w.__str__() -> str
+            returns weather info in
+            a string, for display"""
         return 'Temperature: ' + str(self.t) + '\nHumidity: ' + str(self.h) + '\nAir Pressure: ' + str(self.p)\
         + "\nRainfall: " + str(self.pcp) + "\nWind Speed: " + str(self.ws) + "\nWind Direction: " + \
-        str(self.wd) + "\nCurrent Weather Condition: " + str(self.C)
+        str(self.wd) + "\nSunrise: " + self.sr + "\nSunset: " + self.ss +"\nCurrent Weather Condition: " + str(self.C)
 
+    def __dict__(self):
+        """w.__dict__() -> dict
+            returns weather info as
+            as dictionary"""
+        return {'temp':self.t,
+                'humidity':self.h,
+                'apressure':self.p,
+                'rainfall':self.pcp,
+                'windspeed':self.ws,
+                'winddir':self.wd,
+                'sunrise':self.sr,
+                'sunset':self.ss,
+                'ccondition':self.C
+                }
 
     def getCondition(self):
+        """w.getCondition -> str
+            returns current weather condition"""
         return self.C
 
     def getPrecip(self):
+        """w.getPrecip() -> float
+            returns current amnt of precipitation(in inches)"""
         return self.pcp
 
     def getPressure(self):
+        """w.getPressure() -> str
+            returns atmospheric pressure(in inHG)"""
         return self.p
 
     def getTemp(self):
+        """w.getTemp() -> float
+            returns temperature(in fahrenheit)"""
         return self.t
 
     def getWindSpd(self):
+        """w.getWindSpd -> float
+            returns wind speed(in mph)"""
         return self.ws
 
     def getHumid(self):
+        """w.getHumid -> str
+            returns humidity(in percentage)"""
         return self.h
 
+    def getSunrise(self):
+        """w.getSunrise -> str
+            returns sunrise time"""
+        return self.sr
+
+    def getSunset(self):
+        """w.getSunset -> str
+            returns sunset time"""
+        return self.ss
+
     def getWindDir(self):
+        """w.getWindDir -> str
+            returns direction of wind"""
         return self.wd
 
 
@@ -78,7 +122,8 @@ def getWeather():
     wspdStr = ''
     wdirStr = ''
     cStr = ''
-
+    srStr = ''
+    ssStr = ''
 
     try:
         global city, state, country
@@ -88,8 +133,7 @@ def getWeather():
     except:
         raise RuntimeError('No city and/or state specified')
 
-
-    #<factor>Data LiNe found <- abbreviation for variables
+    # <factor>Data LiNe found <- abbreviation for variables
     tempDLNf = False
     hmdDLNf = False
     prsDLNf = False
@@ -98,9 +142,10 @@ def getWeather():
     wdDLNf = False
     startReading = False
 
-    w = urlopen('http://wunderground.com/' + country + '/'+ state + '/' + city)
+    w = urlopen('http://wunderground.com/' + country + '/' + state + '/' + city)
     wh = w.readlines()
 
+    # search html file
     for ln in wh:
         l = str(ln)
         if tempDLNf:
@@ -159,6 +204,22 @@ def getWeather():
                     elif startReading:
                         wdirStr += char
                 wdDLNf = False
+        elif 'id="cc-sun-rise"' in l:
+            for char in l:
+                if char == '>':
+                    startReading = True
+                elif char == '<':
+                    startReading = False
+                elif startReading:
+                    srStr += char
+        elif 'id="cc-sun-set"' in l:
+            for char in l:
+                if char == '>':
+                    startReading = True
+                elif char == '<':
+                    startReading = False
+                elif startReading:
+                    ssStr += char
         elif 'data-variable="temperature"' in l:
             tempDLNf = True
         elif 'data-variable="humidity"' in l:
@@ -180,11 +241,11 @@ def getWeather():
                 elif startReading:
                     cStr += char
 
-    #please ignore the following block of shameful code
+    # process input from html file
     tempStr = tempStr[:len(tempStr) - 3]
     tempStr = ''.join(filter(lambda x: x.isdigit() or x == '.', tempStr))
     hmdStr = hmdStr[:len(hmdStr)//2]
-    hmdStr = ''.join(filter(lambda x: x.isdigit() or x == '.', hmdStr))
+    hmdStr = ''.join(filter(lambda x: x.isdigit() or x in ['.', '%'], hmdStr))
     prsStr = prsStr[len(prsStr)//2:]
     prsStr = ''.join(filter(lambda x: x.isdigit() or x == '.', prsStr))
     prpStr = prpStr[len(prpStr)//2:]
@@ -193,15 +254,19 @@ def getWeather():
     wdirStr = wdirStr.replace('Wind from ', '')
     wdirStr = ''.join(filter(lambda f: f in ['N', 'S', 'W', 'E'], wdirStr))
     wdirStr2 = ''
-    for chr in wdirStr:
-        if chr == 'N':
+    for chrc in wdirStr:
+        if chrc == 'N':
             wdirStr2 += 'S'
-        elif chr == 'S':
+        elif chrc == 'S':
             wdirStr2 += 'N'
-        elif chr == 'E':
+        elif chrc == 'E':
             wdirStr2 += 'W'
-        elif chr == 'W':
+        elif chrc == 'W':
             wdirStr2 += 'E'
+    srStr = srStr[:len(srStr)//2]
+    srStr = ''.join(filter(lambda x: x.isdigit() or x in ['A', 'M', ' '] or x == ':', srStr))
+    ssStr = ssStr[:len(ssStr)//2]
+    ssStr = ''.join(filter(lambda x: x.isdigit() or x in ['P', 'M', ' '] or x == ':', ssStr))
     cStr = cStr[:len(cStr)-3]
 
-    return weather(tempStr, hmdStr, prsStr, prpStr, wdirStr2, wspdStr, cStr)
+    return Weather(tempStr, hmdStr, prsStr, prpStr, wdirStr2, wspdStr, srStr, ssStr, cStr)
