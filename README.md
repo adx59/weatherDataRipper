@@ -26,4 +26,6 @@ str(w) -> str
 Returns a string of weather data, which is easily human-readable
 dict(w) -> dict
 Returns a dictionary of weather data
-w.get<weather data>
+w.get( insert weather data here )() -> str or float:\n
+Returns the weather data requested, based on the function name
+
