@@ -13,3 +13,17 @@ Wind Speed -> Miles Per Hour
 Wind Direction -> Any combination of N, W, E, S. 
 
 Preciptiation -> Inches
+
+#Functions
+setLoc() -> None
+sets the location for where to find the weather.
+getWeather() -> weather
+
+returns a weather object with the weather data.
+
+WEATHER OBJECT:
+str(w) -> str
+Returns a string of weather data, which is easily human-readable
+dict(w) -> dict
+Returns a dictionary of weather data
+w.get<weather data>
