@@ -22,10 +22,13 @@ getWeather() -> weather
 returns a weather object with the weather data.
 
 WEATHER OBJECT:
-str(w) -> str
+
+str(w) -> str:
 Returns a string of weather data, which is easily human-readable
-dict(w) -> dict
+
+dict(w) -> dict:
 Returns a dictionary of weather data
-w.get( insert weather data here )() -> str or float:\n
+
+w.get( insert weather data here )() -> str or float:
 Returns the weather data requested, based on the function name
 
