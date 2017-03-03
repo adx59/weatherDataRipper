@@ -15,20 +15,25 @@ Wind Direction -> Any combination of N, W, E, S.
 Preciptiation -> Inches
 
 #Functions
-setLoc() -> None
+setLoc() -> None:
+
 sets the location for where to find the weather.
-getWeather() -> weather
+
+getWeather() -> weather:
 
 returns a weather object with the weather data.
 
 WEATHER OBJECT:
 
 str(w) -> str:
+
 Returns a string of weather data, which is easily human-readable
 
 dict(w) -> dict:
+
 Returns a dictionary of weather data
 
 w.get( insert weather data here )() -> str or float:
+
 Returns the weather data requested, based on the function name
 
