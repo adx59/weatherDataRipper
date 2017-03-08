@@ -49,50 +49,10 @@ class Weather:
                 'ccondition':self.C
                 }
 
-    def getCondition(self):
-        """w.getCondition -> str
-            returns current weather condition"""
-        return self.C
-
-    def getPrecip(self):
-        """w.getPrecip() -> float
-            returns current amnt of precipitation(in inches)"""
-        return self.pcp
-
-    def getPressure(self):
-        """w.getPressure() -> str
-            returns atmospheric pressure(in inHG)"""
-        return self.p
-
-    def getTemp(self):
-        """w.getTemp() -> float
-            returns temperature(in fahrenheit)"""
-        return self.t
-
-    def getWindSpd(self):
-        """w.getWindSpd -> float
-            returns wind speed(in mph)"""
-        return self.ws
-
-    def getHumid(self):
-        """w.getHumid -> str
-            returns humidity(in percentage)"""
-        return self.h
-
-    def getSunrise(self):
-        """w.getSunrise -> str
-            returns sunrise time"""
-        return self.sr
-
-    def getSunset(self):
-        """w.getSunset -> str
-            returns sunset time"""
-        return self.ss
-
-    def getWindDir(self):
-        """w.getWindDir -> str
-            returns direction of wind"""
-        return self.wd
+    def getFactor(self, factor):
+        d = self.__dict__()
+        return d[factor]
+    
 
 
 def setLoc(c, s, ct):

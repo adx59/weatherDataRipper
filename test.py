@@ -1,6 +1,6 @@
 import weather as wthr
 
-wthr.setLoc('chicago', 'il', 'us')
+wthr.setLoc('saratoga', 'ca', 'us')
 weather = wthr.getWeather()
 
 print(str(weather))
