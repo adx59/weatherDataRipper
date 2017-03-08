@@ -2,6 +2,9 @@
 
 """Simple weather API that rips weather info from wunderground.com
     setLoc() function is required for getting weather info
+    DICT KEYS:
+    temp, humidity, apressure, rainfall, windspeed, winddir, 
+    sunrise, sunset, ccondition
     """
 
 from urllib.request import urlopen
@@ -50,6 +53,9 @@ class Weather:
                 }
 
     def getFactor(self, factor):
+        """w.getFactor(factor) -> float or str
+            returns factor of weather, factor parameter
+            should be the same as the dict keys"""
         d = self.__dict__()
         return d[factor]
     
@@ -64,10 +70,7 @@ def setLoc(c, s, ct):
         raise RuntimeError('only two-letter state/country codes are accepted')
     city = c.replace(' ', '_')
     state = s
-    if ct == '':
-        country = ''
-    else:
-        country = ct
+    country = ct
 
 
 def getWeather():
