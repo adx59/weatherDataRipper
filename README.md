@@ -1,5 +1,5 @@
 # Update:  
-This entire project is now defunct. Weather Underground has updated their user interface, effectively making this unusable.  
+This entire project is now defunct. Weather Underground has updated their user interface, effectively making this unusable. ALSO, 2020 ADAM HERE, WOW THIS CODE IS AWFUL.
 
 # Weather Data Ripper
 Rips weather data from the website wunderground.com by looking through the website's HTML files. A city, state(leave as '' if not in US), and country is required to find current weather conditions. Only two letter state/country codes are accepted (http://www.nationsonline.org/oneworld/country_code_list.htm is where to find the codes if you don't know them). Makes use of the urllib.request library in Python3. 
